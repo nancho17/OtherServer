@@ -19,4 +19,5 @@ Deserver::Deserver(QObject *parent)
 void Deserver::newConnection(){
     ServerThread *task = new ServerThread(server);
     task->run();
+    task->wait();
 }
