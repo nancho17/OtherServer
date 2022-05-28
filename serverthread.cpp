@@ -11,6 +11,7 @@ ServerThread::ServerThread(QTcpServer *serv)
     //timer->moveToThread(&timerThread);
     timer = new QTimer;
     QObject::connect(timer,  &QTimer::timeout,               this,&ServerThread::sendData );
+    sampleTime=0;
     timer->start(5);
 
 
@@ -34,18 +35,21 @@ void ServerThread::sendData()
     if (image.size() > 0)
     {
         memcpy((char *)dataPacket.imageVar, (char *)image.data(), image.size() * sizeof(double));
+        memcpy((char *)dataPacket.timeVar, (char *)time.data(), time.size() * sizeof(double));
         dataPacket.validCount = image.size();
         image.clear();
+        time.clear();
         QByteArray data((char *)&dataPacket, sizeof(protocolStruct));
         socket->write(data);
         socket->flush();
     }
 
     // Fake simulation pre-store 25 samples
-    // TODO: Prepare vector in other thread
+    // TODO: Pre generate vector in other thread
     for (size_t i = 0; i < 25; i++)
     {
         image.append(1.4142 * qSin((sampleTime)*50 * 2 * M_PI));
+        time.append(sampleTime);
         sampleTime = sampleTime + S_TIME;
     }
 

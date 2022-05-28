@@ -39,6 +39,7 @@ private:
     double sampleTime;
     protocolStruct dataPacket;
     QVector <double> image;
+    QVector <double> time;
     QThread timerThread;
 };
 
